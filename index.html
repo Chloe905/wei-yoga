@@ -1,1095 +1,1106 @@
-<style>
-  * {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-  }
-  body {
-    font-family: var(--font-sans);
-  }
-  .app {
-    max-width: 680px;
-    margin: 0 auto;
-    background: var(--color-background-tertiary);
-    min-height: 600px;
-    border-radius: var(--border-radius-lg);
-    overflow: hidden;
-    border: 0.5px solid var(--color-border-tertiary);
-  }
-  .header {
-    background: var(--color-background-primary);
-    padding: 16px 20px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    border-bottom: 0.5px solid var(--color-border-tertiary);
-  }
-  .logo {
-    font-size: 18px;
-    font-weight: 500;
-    color: var(--color-text-primary);
-  }
-  .logo span {
-    color: #1d9e75;
-  }
-  .points-badge {
-    background: #eaf3de;
-    color: #3b6d11;
-    font-size: 12px;
-    font-weight: 500;
-    padding: 4px 10px;
-    border-radius: 20px;
-    display: flex;
-    align-items: center;
-    gap: 4px;
-  }
-  .nav {
-    display: flex;
-    background: var(--color-background-primary);
-    border-bottom: 0.5px solid var(--color-border-tertiary);
-    overflow-x: auto;
-  }
-  .nav-btn {
-    flex: 1;
-    padding: 10px 4px;
-    font-size: 12px;
-    color: var(--color-text-secondary);
-    background: none;
-    border: none;
-    cursor: pointer;
-    border-bottom: 2px solid transparent;
-    min-width: 60px;
-    transition: all 0.15s;
-  }
-  .nav-btn.active {
-    color: #1d9e75;
-    border-bottom: 2px solid #1d9e75;
-    font-weight: 500;
-  }
-  .content {
-    padding: 16px;
-  }
-  .section {
-    display: none;
-  }
-  .section.active {
-    display: block;
-  }
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Yoga App</title>
 
-  /* Calendar */
-  .cal-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 12px;
-  }
-  .cal-title {
-    font-size: 15px;
-    font-weight: 500;
-  }
-  .cal-nav {
-    background: none;
-    border: 0.5px solid var(--color-border-tertiary);
-    border-radius: 6px;
-    padding: 4px 10px;
-    cursor: pointer;
-    font-size: 13px;
-    color: var(--color-text-secondary);
-  }
-  .cal-grid {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 4px;
-    margin-bottom: 12px;
-  }
-  .cal-day-label {
-    text-align: center;
-    font-size: 11px;
-    color: var(--color-text-tertiary);
-    padding: 4px 0;
-  }
-  .cal-day {
-    text-align: center;
-    padding: 6px 2px;
-    border-radius: 6px;
-    font-size: 13px;
-    cursor: pointer;
-    position: relative;
-    color: var(--color-text-primary);
-  }
-  .cal-day:hover {
-    background: var(--color-background-secondary);
-  }
-  .cal-day.has-class::after {
-    content: '';
-    position: absolute;
-    bottom: 2px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 4px;
-    height: 4px;
-    border-radius: 50%;
-    background: #1d9e75;
-  }
-  .cal-day.selected {
-    background: #1d9e75;
-    color: #fff;
-  }
-  .cal-day.selected::after {
-    background: #fff;
-  }
-  .cal-day.today {
-    font-weight: 500;
-    color: #1d9e75;
-  }
-  .class-list {
-    margin-top: 12px;
-  }
-  .class-card {
-    background: var(--color-background-primary);
-    border: 0.5px solid var(--color-border-tertiary);
-    border-radius: var(--border-radius-md);
-    padding: 12px;
-    margin-bottom: 8px;
-    cursor: pointer;
-    transition: border 0.15s;
-  }
-  .class-card:hover {
-    border-color: #1d9e75;
-  }
-  .class-top {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 6px;
-  }
-  .class-name {
-    font-size: 14px;
-    font-weight: 500;
-  }
-  .class-badge {
-    font-size: 11px;
-    padding: 2px 8px;
-    border-radius: 10px;
-  }
-  .badge-open {
-    background: #eaf3de;
-    color: #3b6d11;
-  }
-  .badge-full {
-    background: #fcebeb;
-    color: #a32d2d;
-  }
-  .class-info {
-    font-size: 12px;
-    color: var(--color-text-secondary);
-    display: flex;
-    gap: 12px;
-  }
-  .book-btn {
-    width: 100%;
-    margin-top: 8px;
-    padding: 8px;
-    background: #1d9e75;
-    color: #fff;
-    border: none;
-    border-radius: 6px;
-    font-size: 13px;
-    cursor: pointer;
-    font-weight: 500;
-  }
-  .book-btn:hover {
-    background: #0f6e56;
-  }
-  .book-btn.link {
-    background: none;
-    border: 0.5px solid #1d9e75;
-    color: #1d9e75;
-  }
-  .book-btn.link:hover {
-    background: #eaf3de;
-  }
-
-  /* Cards draw */
-  .draw-section {
-    text-align: center;
-  }
-  .card-display {
-    background: var(--color-background-primary);
-    border: 0.5px solid var(--color-border-tertiary);
-    border-radius: var(--border-radius-lg);
-    padding: 28px 20px;
-    margin: 12px 0;
-    min-height: 200px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.3s;
-  }
-  .card-emoji {
-    font-size: 48px;
-    margin-bottom: 12px;
-  }
-  .card-name {
-    font-size: 18px;
-    font-weight: 500;
-    margin-bottom: 6px;
-  }
-  .card-desc {
-    font-size: 13px;
-    color: var(--color-text-secondary);
-    line-height: 1.6;
-    max-width: 260px;
-  }
-  .draw-tabs {
-    display: flex;
-    gap: 8px;
-    margin-bottom: 12px;
-    justify-content: center;
-  }
-  .draw-tab {
-    padding: 6px 16px;
-    border-radius: 20px;
-    border: 0.5px solid var(--color-border-tertiary);
-    font-size: 13px;
-    cursor: pointer;
-    background: var(--color-background-primary);
-    color: var(--color-text-secondary);
-  }
-  .draw-tab.active {
-    background: #e1f5ee;
-    color: #0f6e56;
-    border-color: #5dcaa5;
-  }
-  .draw-actions {
-    display: flex;
-    gap: 8px;
-    justify-content: center;
-    flex-wrap: wrap;
-  }
-  .draw-btn {
-    padding: 8px 20px;
-    border-radius: 20px;
-    font-size: 13px;
-    cursor: pointer;
-    border: none;
-    font-weight: 500;
-  }
-  .btn-primary {
-    background: #1d9e75;
-    color: #fff;
-  }
-  .btn-secondary {
-    background: var(--color-background-secondary);
-    color: var(--color-text-primary);
-    border: 0.5px solid var(--color-border-tertiary);
-  }
-  .cooldown {
-    font-size: 12px;
-    color: var(--color-text-tertiary);
-    margin-top: 8px;
-  }
-
-  /* Points & Games */
-  .points-header {
-    background: linear-gradient(135deg, #e1f5ee, #eaf3de);
-    border-radius: var(--border-radius-lg);
-    padding: 20px;
-    margin-bottom: 16px;
-    text-align: center;
-    border: 0.5px solid #9fe1cb;
-  }
-  .points-big {
-    font-size: 36px;
-    font-weight: 500;
-    color: #0f6e56;
-  }
-  .points-label {
-    font-size: 13px;
-    color: #3b6d11;
-    margin-top: 4px;
-  }
-  .progress-bar {
-    background: #c0dd97;
-    border-radius: 10px;
-    height: 8px;
-    margin: 12px 0 4px;
-  }
-  .progress-fill {
-    background: #3b6d11;
-    height: 8px;
-    border-radius: 10px;
-    transition: width 0.5s;
-  }
-  .progress-label {
-    font-size: 11px;
-    color: #3b6d11;
-    text-align: right;
-  }
-  .games-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
-    margin-top: 12px;
-  }
-  .game-card {
-    background: var(--color-background-primary);
-    border: 0.5px solid var(--color-border-tertiary);
-    border-radius: var(--border-radius-md);
-    padding: 12px;
-    cursor: pointer;
-    text-align: center;
-    transition: all 0.15s;
-  }
-  .game-card:hover {
-    border-color: #1d9e75;
-    background: #eaf3de;
-  }
-  .game-icon {
-    font-size: 28px;
-    margin-bottom: 6px;
-  }
-  .game-name {
-    font-size: 13px;
-    font-weight: 500;
-    margin-bottom: 2px;
-  }
-  .game-pts {
-    font-size: 11px;
-    color: #3b6d11;
-    background: #eaf3de;
-    padding: 2px 8px;
-    border-radius: 10px;
-    display: inline-block;
-  }
-  .history-list {
-    margin-top: 12px;
-  }
-  .history-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 8px 0;
-    border-bottom: 0.5px solid var(--color-border-tertiary);
-    font-size: 13px;
-  }
-  .history-pts {
-    color: #1d9e75;
-    font-weight: 500;
-  }
-
-  /* Profile / Teacher mode */
-  .mode-toggle {
-    display: flex;
-    background: var(--color-background-secondary);
-    border-radius: 20px;
-    padding: 3px;
-    margin-bottom: 16px;
-  }
-  .mode-btn {
-    flex: 1;
-    padding: 6px;
-    font-size: 13px;
-    border: none;
-    border-radius: 16px;
-    cursor: pointer;
-    background: none;
-    color: var(--color-text-secondary);
-  }
-  .mode-btn.active {
-    background: var(--color-background-primary);
-    color: var(--color-text-primary);
-    font-weight: 500;
-  }
-  .add-class-form {
-    background: var(--color-background-primary);
-    border: 0.5px solid var(--color-border-tertiary);
-    border-radius: var(--border-radius-md);
-    padding: 16px;
-  }
-  .form-row {
-    margin-bottom: 12px;
-  }
-  .form-label {
-    font-size: 12px;
-    color: var(--color-text-secondary);
-    margin-bottom: 4px;
-    display: block;
-  }
-  .form-input {
-    width: 100%;
-    padding: 8px 10px;
-    border: 0.5px solid var(--color-border-tertiary);
-    border-radius: 6px;
-    font-size: 13px;
-    background: var(--color-background-primary);
-    color: var(--color-text-primary);
-  }
-  .form-row-2 {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
-  }
-  .submit-btn {
-    width: 100%;
-    padding: 10px;
-    background: #1d9e75;
-    color: #fff;
-    border: none;
-    border-radius: 6px;
-    font-size: 14px;
-    font-weight: 500;
-    cursor: pointer;
-    margin-top: 4px;
-  }
-
-  /* Mini game */
-  .game-area {
-    text-align: center;
-    padding: 8px;
-  }
-  .breath-circle {
-    width: 120px;
-    height: 120px;
-    border-radius: 50%;
-    background: #e1f5ee;
-    border: 3px solid #1d9e75;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 16px auto;
-    font-size: 13px;
-    color: #0f6e56;
-    transition: all 1s ease-in-out;
-    cursor: pointer;
-  }
-  .breath-label {
-    font-size: 24px;
-    font-weight: 500;
-    margin-bottom: 4px;
-    color: #1d9e75;
-  }
-  .streak {
-    display: flex;
-    gap: 4px;
-    justify-content: center;
-    margin-top: 12px;
-  }
-  .streak-dot {
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
-    background: var(--color-background-secondary);
-    border: 0.5px solid var(--color-border-tertiary);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 11px;
-    color: var(--color-text-tertiary);
-  }
-  .streak-dot.done {
-    background: #1d9e75;
-    color: #fff;
-    border-color: #1d9e75;
-  }
-  .toast {
-    position: fixed;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: #1d9e75;
-    color: #fff;
-    padding: 8px 20px;
-    border-radius: 20px;
-    font-size: 13px;
-    opacity: 0;
-    transition: opacity 0.3s;
-    pointer-events: none;
-    z-index: 99;
-  }
-  .toast.show {
-    opacity: 1;
-  }
-</style>
-
-<h2 class="sr-only">瑜伽 App 原型 — 包含行事曆排課、抽卡、集點小遊戲等功能</h2>
-
-<div class="app">
-  <div class="header">
-    <div class="logo">Flow<span>Yoga</span></div>
-    <div class="points-badge">
-      <span>★</span>
-      <span id="header-pts">120</span> 點
-    </div>
-  </div>
-  <nav class="nav">
-    <button class="nav-btn active" onclick="switchTab('calendar')">行事曆</button>
-    <button class="nav-btn" onclick="switchTab('cards')">抽卡</button>
-    <button class="nav-btn" onclick="switchTab('points')">集點</button>
-    <button class="nav-btn" onclick="switchTab('teacher')">老師模式</button>
-    <button class="nav-btn" onclick="switchTab('profile')">我的</button>
-  </nav>
-
-  <div class="content">
-    <!-- Calendar -->
-    <div id="tab-calendar" class="section active">
-      <div class="cal-header">
-        <button class="cal-nav" onclick="changeMonth(-1)">‹</button>
-        <div class="cal-title" id="cal-title">2026年4月</div>
-        <button class="cal-nav" onclick="changeMonth(1)">›</button>
-      </div>
-      <div class="cal-grid" id="cal-grid"></div>
-      <div class="class-list" id="class-list"></div>
-    </div>
-
-    <!-- Draw Cards -->
-    <div id="tab-cards" class="section">
-      <div class="draw-section">
-        <div class="draw-tabs">
-          <div class="draw-tab active" onclick="setCardType('pose', this)">體位法卡</div>
-          <div class="draw-tab" onclick="setCardType('mind', this)">心靈小卡</div>
-        </div>
-        <div class="card-display" id="card-display">
-          <div class="card-emoji" id="card-emoji">🧘</div>
-          <div class="card-name" id="card-name">點擊抽卡</div>
-          <div class="card-desc" id="card-desc">每日一抽，或用集點解鎖更多次數</div>
-        </div>
-        <div class="draw-actions">
-          <button class="draw-btn btn-primary" onclick="drawCard(1)">每日一抽 (免費)</button>
-          <button class="draw-btn btn-secondary" onclick="drawCard(20)">集點抽 (-20點)</button>
-        </div>
-        <div class="cooldown" id="cooldown-msg">今日免費抽卡：剩餘 1 次</div>
-      </div>
-    </div>
-
-    <!-- Points -->
-    <div id="tab-points" class="section">
-      <div class="points-header">
-        <div class="points-big" id="pts-display">120</div>
-        <div class="points-label">目前積分</div>
-        <div class="progress-bar"><div class="progress-fill" id="pts-bar" style="width: 48%"></div></div>
-        <div class="progress-label" id="pts-next">再 80 點解鎖「多抽一次」</div>
-      </div>
-      <div style="font-size: 13px; font-weight: 500; margin-bottom: 8px; color: var(--color-text-secondary)">賺取積分</div>
-      <div class="games-grid">
-        <div class="game-card" onclick="playBreath()">
-          <div class="game-icon">🌬️</div>
-          <div class="game-name">呼吸練習</div>
-          <div class="game-pts">+10 點/回合</div>
-        </div>
-        <div class="game-card" onclick="doCheckin()">
-          <div class="game-icon">✅</div>
-          <div class="game-name">每日打卡</div>
-          <div class="game-pts">+15 點/天</div>
-        </div>
-        <div class="game-card" onclick="doPoseQuiz()">
-          <div class="game-icon">🎯</div>
-          <div class="game-name">體位問答</div>
-          <div class="game-pts">+5~25 點</div>
-        </div>
-        <div class="game-card" onclick="showStreak()">
-          <div class="game-icon">🔥</div>
-          <div class="game-name">連續天數</div>
-          <div class="game-pts">天數×2 點</div>
-        </div>
-      </div>
-      <div style="font-size: 13px; font-weight: 500; margin: 16px 0 8px; color: var(--color-text-secondary)">最近紀錄</div>
-      <div class="history-list" id="history-list"></div>
-    </div>
-
-    <!-- Teacher Mode -->
-    <div id="tab-teacher" class="section">
-      <div class="mode-toggle">
-        <button class="mode-btn active" id="mode-teacher" onclick="setMode('teacher')">老師模式</button>
-        <button class="mode-btn" id="mode-student" onclick="setMode('student')">學生預覽</button>
-      </div>
-      <div id="teacher-panel">
-        <div style="font-size: 13px; font-weight: 500; margin-bottom: 10px; color: var(--color-text-secondary)">新增課程</div>
-        <div class="add-class-form">
-          <div class="form-row">
-            <label class="form-label">課程名稱</label>
-            <input class="form-input" id="new-class-name" placeholder="e.g. 晨間流瑜伽" />
-          </div>
-          <div class="form-row form-row-2">
-            <div>
-              <label class="form-label">日期</label>
-              <input class="form-input" id="new-class-date" type="date" value="2026-04-30" />
-            </div>
-            <div>
-              <label class="form-label">時間</label>
-              <input class="form-input" id="new-class-time" type="time" value="07:00" />
-            </div>
-          </div>
-          <div class="form-row form-row-2">
-            <div>
-              <label class="form-label">人數上限</label>
-              <input class="form-input" id="new-class-max" type="number" value="12" min="1" max="30" />
-            </div>
-            <div>
-              <label class="form-label">時長（分鐘）</label>
-              <input class="form-input" id="new-class-dur" type="number" value="60" />
-            </div>
-          </div>
-          <div class="form-row">
-            <label class="form-label">報名表單連結</label>
-            <input class="form-input" id="new-class-link" placeholder="https://forms.google.com/..." />
-          </div>
-          <button class="submit-btn" onclick="addClass()">+ 新增課程</button>
-        </div>
-      </div>
-      <div id="student-panel" style="display: none">
-        <div style="font-size: 13px; color: var(--color-text-secondary); margin-bottom: 10px">以下是老師開放的課程，點擊即可前往報名表單</div>
-        <div id="student-class-list"></div>
-      </div>
-    </div>
-
-    <!-- Profile -->
-    <div id="tab-profile" class="section">
-      <div
-        style="
-          display: flex;
-          align-items: center;
-          gap: 14px;
-          background: var(--color-background-primary);
-          border: 0.5px solid var(--color-border-tertiary);
-          border-radius: var(--border-radius-lg);
-          padding: 16px;
-          margin-bottom: 12px;
-        "
-      >
-        <div style="width: 52px; height: 52px; border-radius: 50%; background: #e1f5ee; display: flex; align-items: center; justify-content: center; font-size: 22px">🧘‍♀️</div>
-        <div>
-          <div style="font-size: 16px; font-weight: 500">Mei Lin</div>
-          <div style="font-size: 13px; color: var(--color-text-secondary)">加入 128 天</div>
-        </div>
-      </div>
-      <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 16px">
-        <div style="background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 12px; text-align: center">
-          <div style="font-size: 22px; font-weight: 500; color: #1d9e75">47</div>
-          <div style="font-size: 11px; color: var(--color-text-secondary)">已上課堂</div>
-        </div>
-        <div style="background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 12px; text-align: center">
-          <div style="font-size: 22px; font-weight: 500; color: #1d9e75" id="profile-pts">120</div>
-          <div style="font-size: 11px; color: var(--color-text-secondary)">積分</div>
-        </div>
-        <div style="background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 12px; text-align: center">
-          <div style="font-size: 22px; font-weight: 500; color: #1d9e75">12</div>
-          <div style="font-size: 11px; color: var(--color-text-secondary)">連續天數</div>
-        </div>
-      </div>
-      <div style="background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-md); overflow: hidden">
-        <div style="padding: 12px 14px; border-bottom: 0.5px solid var(--color-border-tertiary); font-size: 13px; display: flex; justify-content: space-between">
-          <span>推播通知</span><span style="color: #1d9e75">開啟</span>
-        </div>
-        <div style="padding: 12px 14px; border-bottom: 0.5px solid var(--color-border-tertiary); font-size: 13px; display: flex; justify-content: space-between">
-          <span>上課提醒</span><span style="color: #1d9e75">上課前1小時</span>
-        </div>
-        <div style="padding: 12px 14px; font-size: 13px; display: flex; justify-content: space-between"><span>語言</span><span style="color: var(--color-text-secondary)">繁體中文</span></div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="toast" id="toast"></div>
-
-<script>
-  var pts = 120;
-  var freeDrawUsed = false;
-  var cardType = 'pose';
-  var checkinDone = false;
-  var currentMonth = 4;
-  var currentYear = 2026;
-
-  var posCards = [
-    { e: '🧘', n: '山式 Tadasana', d: '穩固站立，感受大地能量由腳底升起，建立內在根基' },
-    { e: '🌊', n: '拜日式 Surya Namaskar', d: '十二個動作串聯，喚醒身體，向光之能量致敬' },
-    { e: '🦁', n: '獅子式 Simhasana', d: '大口吐氣，釋放壓力，讓勇氣從胸腔湧現' },
-    { e: '🌳', n: '樹式 Vrksasana', d: '單腳平衡，如樹根深植，培養專注與穩定' },
-    { e: '🐍', n: '眼鏡蛇式 Bhujangasana', d: '開展心輪，增強脊椎彈性，提振精神與自信' },
-    { e: '🦅', n: '鷹式 Garudasana', d: '扭轉纏繞，考驗平衡，象徵專注如鷹的視野' }
-  ];
-  var mindCards = [
-    { e: '🌸', n: '今日主題：接納', d: '放下對完美的執著，允許自己就是現在的樣子' },
-    { e: '☀️', n: '今日主題：感恩', d: '感謝身體帶你走過每一天，每次呼吸都是禮物' },
-    { e: '🌙', n: '今日主題：放下', d: '如月落入水中，靜靜沉澱，讓不需要的隨水漂走' },
-    { e: '🌿', n: '今日主題：生長', d: '每一個不舒服的伸展，都是成長的空間在打開' },
-    { e: '💧', n: '今日主題：流動', d: '不抗拒改變，像水一樣找到屬於自己的形狀' }
-  ];
-
-  var classes = [
-    { date: '2026-04-29', name: '晨間流瑜伽', time: '07:00', dur: 60, max: 12, booked: 8, link: 'https://forms.google.com/example1' },
-    { date: '2026-04-29', name: '陰瑜伽放鬆', time: '19:30', dur: 75, max: 10, booked: 10, link: 'https://forms.google.com/example2' },
-    { date: '2026-04-30', name: '孕婦瑜伽', time: '10:00', dur: 60, max: 8, booked: 3, link: 'https://forms.google.com/example3' },
-    { date: '2026-05-02', name: '力量瑜伽', time: '18:00', dur: 60, max: 15, booked: 11, link: 'https://forms.google.com/example4' },
-    { date: '2026-05-05', name: '冥想靜坐', time: '07:30', dur: 45, max: 20, booked: 6, link: 'https://forms.google.com/example5' }
-  ];
-
-  var history = [
-    { label: '每日打卡', pts: 15, date: '今天' },
-    { label: '呼吸練習', pts: 10, date: '昨天' },
-    { label: '集點抽卡', pts: -20, date: '昨天' },
-    { label: '體位問答', pts: 15, date: '3天前' }
-  ];
-
-  var selectedDate = '2026-04-29';
-
-  function switchTab(t) {
-    document.querySelectorAll('.section').forEach((s) => s.classList.remove('active'));
-    document.querySelectorAll('.nav-btn').forEach((b) => b.classList.remove('active'));
-    document.getElementById('tab-' + t).classList.add('active');
-    event.target.classList.add('active');
-    if (t === 'points') renderHistory();
-    if (t === 'calendar') renderCalendar();
-    if (t === 'teacher') renderStudentList();
-  }
-
-  function renderCalendar() {
-    var title = currentYear + '年' + currentMonth + '月';
-    document.getElementById('cal-title').textContent = title;
-    var grid = document.getElementById('cal-grid');
-    var days = ['日', '一', '二', '三', '四', '五', '六'];
-    grid.innerHTML = days.map((d) => '<div class="cal-day-label">' + d + '</div>').join('');
-    var first = new Date(currentYear, currentMonth - 1, 1).getDay();
-    var total = new Date(currentYear, currentMonth, 0).getDate();
-    for (var i = 0; i < first; i++) grid.innerHTML += '<div></div>';
-    var classDates = classes.map((c) => c.date);
-    for (var d = 1; d <= total; d++) {
-      var dateStr = currentYear + '-' + String(currentMonth).padStart(2, '0') + '-' + String(d).padStart(2, '0');
-      var isToday = currentYear === 2026 && currentMonth === 4 && d === 29;
-      var hasClass = classDates.includes(dateStr);
-      var isSel = dateStr === selectedDate;
-      var cls = 'cal-day' + (isToday ? ' today' : '') + (hasClass ? ' has-class' : '') + (isSel ? ' selected' : '');
-      grid.innerHTML += '<div class="' + cls + '" onclick="selectDate(\'' + dateStr + '\')">' + d + '</div>';
-    }
-    renderClassList();
-  }
-
-  function selectDate(d) {
-    selectedDate = d;
-    renderCalendar();
-  }
-
-  function changeMonth(dir) {
-    currentMonth += dir;
-    if (currentMonth > 12) {
-      currentMonth = 1;
-      currentYear++;
-    }
-    if (currentMonth < 1) {
-      currentMonth = 12;
-      currentYear--;
-    }
-    renderCalendar();
-  }
-
-  function renderClassList() {
-    var list = document.getElementById('class-list');
-    var dayClasses = classes.filter((c) => c.date === selectedDate);
-    if (!dayClasses.length) {
-      list.innerHTML = '<div style="text-align:center;color:var(--color-text-tertiary);padding:20px;font-size:13px">這天沒有課程</div>';
-      return;
-    }
-    list.innerHTML = dayClasses
-      .map((c) => {
-        var full = c.booked >= c.max;
-        return (
-          '<div class="class-card"><div class="class-top"><div class="class-name">' +
-          c.name +
-          '</div><span class="class-badge ' +
-          (full ? 'badge-full' : 'badge-open') +
-          '">' +
-          (full ? '已額滿' : '開放報名') +
-          '</span></div><div class="class-info"><span>' +
-          c.time +
-          '</span><span>' +
-          c.dur +
-          '分鐘</span><span>' +
-          c.booked +
-          '/' +
-          c.max +
-          ' 人</span></div>' +
-          (full
-            ? '<button class="book-btn" style="background:#D3D1C7;cursor:not-allowed">已額滿</button>'
-            : '<button class="book-btn link" onclick="openLink(\'' + c.link + '\')">前往報名表單 ↗</button>') +
-          '</div>'
-        );
-      })
-      .join('');
-  }
-
-  function openLink(url) {
-    showToast('開啟報名表單...');
-  }
-
-  function setCardType(t, el) {
-    cardType = t;
-    document.querySelectorAll('.draw-tab').forEach((e) => e.classList.remove('active'));
-    el.classList.add('active');
-    document.getElementById('card-emoji').textContent = '🧘';
-    document.getElementById('card-name').textContent = '點擊抽卡';
-    document.getElementById('card-desc').textContent = '選擇卡種，開始抽卡';
-  }
-
-  function drawCard(cost) {
-    if (cost === 1 && freeDrawUsed) {
-      showToast('今日免費抽卡已用完！');
-      return;
-    }
-    if (cost === 20) {
-      if (pts < 20) {
-        showToast('積分不足！');
-        return;
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
       }
-      pts -= 20;
-      addHistory('集點抽卡', -20);
-    } else {
-      freeDrawUsed = true;
-      document.getElementById('cooldown-msg').textContent = '今日免費抽卡：已使用';
-    }
-    var pool = cardType === 'pose' ? posCards : mindCards;
-    var card = pool[Math.floor(Math.random() * pool.length)];
-    document.getElementById('card-emoji').textContent = card.e;
-    document.getElementById('card-name').textContent = card.n;
-    document.getElementById('card-desc').textContent = card.d;
-    updatePts();
-    showToast('抽到：' + card.n + ' ✨');
-  }
+      body {
+        font-family: var(--font-sans);
+      }
+      .app {
+        max-width: 680px;
+        margin: 0 auto;
+        background: var(--color-background-tertiary);
+        min-height: 600px;
+        border-radius: var(--border-radius-lg);
+        overflow: hidden;
+        border: 0.5px solid var(--color-border-tertiary);
+      }
+      .header {
+        background: var(--color-background-primary);
+        padding: 16px 20px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-bottom: 0.5px solid var(--color-border-tertiary);
+      }
+      .logo {
+        font-size: 18px;
+        font-weight: 500;
+        color: var(--color-text-primary);
+      }
+      .logo span {
+        color: #1d9e75;
+      }
+      .points-badge {
+        background: #eaf3de;
+        color: #3b6d11;
+        font-size: 12px;
+        font-weight: 500;
+        padding: 4px 10px;
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+      .nav {
+        display: flex;
+        background: var(--color-background-primary);
+        border-bottom: 0.5px solid var(--color-border-tertiary);
+        overflow-x: auto;
+      }
+      .nav-btn {
+        flex: 1;
+        padding: 10px 4px;
+        font-size: 12px;
+        color: var(--color-text-secondary);
+        background: none;
+        border: none;
+        cursor: pointer;
+        border-bottom: 2px solid transparent;
+        min-width: 60px;
+        transition: all 0.15s;
+      }
+      .nav-btn.active {
+        color: #1d9e75;
+        border-bottom: 2px solid #1d9e75;
+        font-weight: 500;
+      }
+      .content {
+        padding: 16px;
+      }
+      .section {
+        display: none;
+      }
+      .section.active {
+        display: block;
+      }
 
-  function addHistory(label, p) {
-    history.unshift({ label: label, pts: p, date: '剛剛' });
-  }
+      /* Calendar */
+      .cal-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 12px;
+      }
+      .cal-title {
+        font-size: 15px;
+        font-weight: 500;
+      }
+      .cal-nav {
+        background: none;
+        border: 0.5px solid var(--color-border-tertiary);
+        border-radius: 6px;
+        padding: 4px 10px;
+        cursor: pointer;
+        font-size: 13px;
+        color: var(--color-text-secondary);
+      }
+      .cal-grid {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 4px;
+        margin-bottom: 12px;
+      }
+      .cal-day-label {
+        text-align: center;
+        font-size: 11px;
+        color: var(--color-text-tertiary);
+        padding: 4px 0;
+      }
+      .cal-day {
+        text-align: center;
+        padding: 6px 2px;
+        border-radius: 6px;
+        font-size: 13px;
+        cursor: pointer;
+        position: relative;
+        color: var(--color-text-primary);
+      }
+      .cal-day:hover {
+        background: var(--color-background-secondary);
+      }
+      .cal-day.has-class::after {
+        content: '';
+        position: absolute;
+        bottom: 2px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 4px;
+        height: 4px;
+        border-radius: 50%;
+        background: #1d9e75;
+      }
+      .cal-day.selected {
+        background: #1d9e75;
+        color: #fff;
+      }
+      .cal-day.selected::after {
+        background: #fff;
+      }
+      .cal-day.today {
+        font-weight: 500;
+        color: #1d9e75;
+      }
+      .class-list {
+        margin-top: 12px;
+      }
+      .class-card {
+        background: var(--color-background-primary);
+        border: 0.5px solid var(--color-border-tertiary);
+        border-radius: var(--border-radius-md);
+        padding: 12px;
+        margin-bottom: 8px;
+        cursor: pointer;
+        transition: border 0.15s;
+      }
+      .class-card:hover {
+        border-color: #1d9e75;
+      }
+      .class-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 6px;
+      }
+      .class-name {
+        font-size: 14px;
+        font-weight: 500;
+      }
+      .class-badge {
+        font-size: 11px;
+        padding: 2px 8px;
+        border-radius: 10px;
+      }
+      .badge-open {
+        background: #eaf3de;
+        color: #3b6d11;
+      }
+      .badge-full {
+        background: #fcebeb;
+        color: #a32d2d;
+      }
+      .class-info {
+        font-size: 12px;
+        color: var(--color-text-secondary);
+        display: flex;
+        gap: 12px;
+      }
+      .book-btn {
+        width: 100%;
+        margin-top: 8px;
+        padding: 8px;
+        background: #1d9e75;
+        color: #fff;
+        border: none;
+        border-radius: 6px;
+        font-size: 13px;
+        cursor: pointer;
+        font-weight: 500;
+      }
+      .book-btn:hover {
+        background: #0f6e56;
+      }
+      .book-btn.link {
+        background: none;
+        border: 0.5px solid #1d9e75;
+        color: #1d9e75;
+      }
+      .book-btn.link:hover {
+        background: #eaf3de;
+      }
 
-  function renderHistory() {
-    var list = document.getElementById('history-list');
-    list.innerHTML = history
-      .map(
-        (h) =>
-          '<div class="history-item"><span>' +
-          h.label +
-          '</span><div><span class="history-pts">' +
-          (h.pts > 0 ? '+' : '') +
-          h.pts +
-          ' 點</span><span style="font-size:11px;color:var(--color-text-tertiary);margin-left:6px">' +
-          h.date +
-          '</span></div></div>'
-      )
-      .join('');
-  }
+      /* Cards draw */
+      .draw-section {
+        text-align: center;
+      }
+      .card-display {
+        background: var(--color-background-primary);
+        border: 0.5px solid var(--color-border-tertiary);
+        border-radius: var(--border-radius-lg);
+        padding: 28px 20px;
+        margin: 12px 0;
+        min-height: 200px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s;
+      }
+      .card-emoji {
+        font-size: 48px;
+        margin-bottom: 12px;
+      }
+      .card-name {
+        font-size: 18px;
+        font-weight: 500;
+        margin-bottom: 6px;
+      }
+      .card-desc {
+        font-size: 13px;
+        color: var(--color-text-secondary);
+        line-height: 1.6;
+        max-width: 260px;
+      }
+      .draw-tabs {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 12px;
+        justify-content: center;
+      }
+      .draw-tab {
+        padding: 6px 16px;
+        border-radius: 20px;
+        border: 0.5px solid var(--color-border-tertiary);
+        font-size: 13px;
+        cursor: pointer;
+        background: var(--color-background-primary);
+        color: var(--color-text-secondary);
+      }
+      .draw-tab.active {
+        background: #e1f5ee;
+        color: #0f6e56;
+        border-color: #5dcaa5;
+      }
+      .draw-actions {
+        display: flex;
+        gap: 8px;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+      .draw-btn {
+        padding: 8px 20px;
+        border-radius: 20px;
+        font-size: 13px;
+        cursor: pointer;
+        border: none;
+        font-weight: 500;
+      }
+      .btn-primary {
+        background: #1d9e75;
+        color: #fff;
+      }
+      .btn-secondary {
+        background: var(--color-background-secondary);
+        color: var(--color-text-primary);
+        border: 0.5px solid var(--color-border-tertiary);
+      }
+      .cooldown {
+        font-size: 12px;
+        color: var(--color-text-tertiary);
+        margin-top: 8px;
+      }
 
-  function updatePts() {
-    document.getElementById('header-pts').textContent = pts;
-    document.getElementById('pts-display').textContent = pts;
-    document.getElementById('profile-pts').textContent = pts;
-    var pct = Math.min((pts / 200) * 100, 100);
-    document.getElementById('pts-bar').style.width = pct + '%';
-    var next = Math.max(200 - pts, 0);
-    document.getElementById('pts-next').textContent = next > 0 ? '再 ' + next + ' 點解鎖「多抽一次」' : '已解鎖多抽一次！';
-  }
+      /* Points & Games */
+      .points-header {
+        background: linear-gradient(135deg, #e1f5ee, #eaf3de);
+        border-radius: var(--border-radius-lg);
+        padding: 20px;
+        margin-bottom: 16px;
+        text-align: center;
+        border: 0.5px solid #9fe1cb;
+      }
+      .points-big {
+        font-size: 36px;
+        font-weight: 500;
+        color: #0f6e56;
+      }
+      .points-label {
+        font-size: 13px;
+        color: #3b6d11;
+        margin-top: 4px;
+      }
+      .progress-bar {
+        background: #c0dd97;
+        border-radius: 10px;
+        height: 8px;
+        margin: 12px 0 4px;
+      }
+      .progress-fill {
+        background: #3b6d11;
+        height: 8px;
+        border-radius: 10px;
+        transition: width 0.5s;
+      }
+      .progress-label {
+        font-size: 11px;
+        color: #3b6d11;
+        text-align: right;
+      }
+      .games-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+        margin-top: 12px;
+      }
+      .game-card {
+        background: var(--color-background-primary);
+        border: 0.5px solid var(--color-border-tertiary);
+        border-radius: var(--border-radius-md);
+        padding: 12px;
+        cursor: pointer;
+        text-align: center;
+        transition: all 0.15s;
+      }
+      .game-card:hover {
+        border-color: #1d9e75;
+        background: #eaf3de;
+      }
+      .game-icon {
+        font-size: 28px;
+        margin-bottom: 6px;
+      }
+      .game-name {
+        font-size: 13px;
+        font-weight: 500;
+        margin-bottom: 2px;
+      }
+      .game-pts {
+        font-size: 11px;
+        color: #3b6d11;
+        background: #eaf3de;
+        padding: 2px 8px;
+        border-radius: 10px;
+        display: inline-block;
+      }
+      .history-list {
+        margin-top: 12px;
+      }
+      .history-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 8px 0;
+        border-bottom: 0.5px solid var(--color-border-tertiary);
+        font-size: 13px;
+      }
+      .history-pts {
+        color: #1d9e75;
+        font-weight: 500;
+      }
 
-  function doCheckin() {
-    if (checkinDone) {
-      showToast('今天已打卡囉！');
-      return;
-    }
-    checkinDone = true;
-    pts += 15;
-    addHistory('每日打卡', 15);
-    updatePts();
-    renderHistory();
-    showToast('+15 點！打卡成功 ✅');
-  }
+      /* Profile / Teacher mode */
+      .mode-toggle {
+        display: flex;
+        background: var(--color-background-secondary);
+        border-radius: 20px;
+        padding: 3px;
+        margin-bottom: 16px;
+      }
+      .mode-btn {
+        flex: 1;
+        padding: 6px;
+        font-size: 13px;
+        border: none;
+        border-radius: 16px;
+        cursor: pointer;
+        background: none;
+        color: var(--color-text-secondary);
+      }
+      .mode-btn.active {
+        background: var(--color-background-primary);
+        color: var(--color-text-primary);
+        font-weight: 500;
+      }
+      .add-class-form {
+        background: var(--color-background-primary);
+        border: 0.5px solid var(--color-border-tertiary);
+        border-radius: var(--border-radius-md);
+        padding: 16px;
+      }
+      .form-row {
+        margin-bottom: 12px;
+      }
+      .form-label {
+        font-size: 12px;
+        color: var(--color-text-secondary);
+        margin-bottom: 4px;
+        display: block;
+      }
+      .form-input {
+        width: 100%;
+        padding: 8px 10px;
+        border: 0.5px solid var(--color-border-tertiary);
+        border-radius: 6px;
+        font-size: 13px;
+        background: var(--color-background-primary);
+        color: var(--color-text-primary);
+      }
+      .form-row-2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+      }
+      .submit-btn {
+        width: 100%;
+        padding: 10px;
+        background: #1d9e75;
+        color: #fff;
+        border: none;
+        border-radius: 6px;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        margin-top: 4px;
+      }
 
-  function playBreath() {
-    var circle = document.getElementById('card-display');
-    var orig = circle.innerHTML;
-    document.getElementById('tab-cards').style.display = 'none';
-    var panel = document.getElementById('tab-points');
-    panel.innerHTML =
-      '<div class="game-area"><div style="font-size:14px;font-weight:500;margin-bottom:4px">呼吸練習</div><div style="font-size:12px;color:var(--color-text-secondary);margin-bottom:8px">跟著圓圈節奏呼吸，完成 3 輪獲得積分</div><div class="breath-circle" id="bcircle" onclick="nextBreath()"><div><div class="breath-label" id="blabel">吸氣</div><div id="bcount" style="font-size:12px;color:#3B6D11">點擊開始</div></div></div><div style="font-size:12px;color:var(--color-text-secondary)" id="bread">準備好了嗎？</div><div class="streak" id="bstreak"></div><button class="draw-btn btn-secondary" style="margin-top:16px" onclick="exitBreath()">← 返回</button></div>';
-    var round = 0,
-      phase = 0,
-      phases = ['吸氣', '屏息', '吐氣', '屏息'],
-      durations = [4, 2, 6, 2];
-    var timer,
-      done = false;
-    var strk = document.getElementById('bstreak');
-    for (var i = 0; i < 3; i++) strk.innerHTML += '<div class="streak-dot" id="sd' + i + '">' + '①②③'[i] + '</div>';
-    window._exitBreath = false;
-    function nextPhase() {
-      if (window._exitBreath) return;
-      if (done) return;
-      document.getElementById('blabel').textContent = phases[phase];
-      var sz = phase === 0 || phase === 1 ? '150px' : '100px';
-      document.getElementById('bcircle').style.width = sz;
-      document.getElementById('bcircle').style.height = sz;
-      document.getElementById('bread').textContent = '保持 ' + durations[phase] + ' 秒';
-      var t = 0,
-        iv = setInterval(function () {
-          t++;
-          document.getElementById('bcount').textContent = durations[phase] - t + ' 秒';
-          if (t >= durations[phase]) {
-            clearInterval(iv);
-            phase = (phase + 1) % 4;
-            if (phase === 0) {
-              round++;
-              document.getElementById('sd' + (round - 1)).classList.add('done');
-              if (round >= 3) {
-                done = true;
-                pts += 10;
-                addHistory('呼吸練習', 10);
-                updatePts();
-                document.getElementById('bread').textContent = '完成！獲得 +10 積分 🎉';
-                document.getElementById('blabel').textContent = '完成';
-                document.getElementById('bcount').textContent = '';
-                return;
-              }
-            }
-            nextPhase();
+      /* Mini game */
+      .game-area {
+        text-align: center;
+        padding: 8px;
+      }
+      .breath-circle {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        background: #e1f5ee;
+        border: 3px solid #1d9e75;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 16px auto;
+        font-size: 13px;
+        color: #0f6e56;
+        transition: all 1s ease-in-out;
+        cursor: pointer;
+      }
+      .breath-label {
+        font-size: 24px;
+        font-weight: 500;
+        margin-bottom: 4px;
+        color: #1d9e75;
+      }
+      .streak {
+        display: flex;
+        gap: 4px;
+        justify-content: center;
+        margin-top: 12px;
+      }
+      .streak-dot {
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        background: var(--color-background-secondary);
+        border: 0.5px solid var(--color-border-tertiary);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 11px;
+        color: var(--color-text-tertiary);
+      }
+      .streak-dot.done {
+        background: #1d9e75;
+        color: #fff;
+        border-color: #1d9e75;
+      }
+      .toast {
+        position: fixed;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: #1d9e75;
+        color: #fff;
+        padding: 8px 20px;
+        border-radius: 20px;
+        font-size: 13px;
+        opacity: 0;
+        transition: opacity 0.3s;
+        pointer-events: none;
+        z-index: 99;
+      }
+      .toast.show {
+        opacity: 1;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- 你的內容 -->
+    <h2 class="sr-only">瑜伽 App 原型 — 包含行事曆排課、抽卡、集點小遊戲等功能</h2>
+
+    <div class="app">
+      <div class="header">
+        <div class="logo">Flow<span>Yoga</span></div>
+        <div class="points-badge">
+          <span>★</span>
+          <span id="header-pts">120</span> 點
+        </div>
+      </div>
+      <nav class="nav">
+        <button class="nav-btn active" onclick="switchTab('calendar')">行事曆</button>
+        <button class="nav-btn" onclick="switchTab('cards')">抽卡</button>
+        <button class="nav-btn" onclick="switchTab('points')">集點</button>
+        <button class="nav-btn" onclick="switchTab('teacher')">老師模式</button>
+        <button class="nav-btn" onclick="switchTab('profile')">我的</button>
+      </nav>
+
+      <div class="content">
+        <!-- Calendar -->
+        <div id="tab-calendar" class="section active">
+          <div class="cal-header">
+            <button class="cal-nav" onclick="changeMonth(-1)">‹</button>
+            <div class="cal-title" id="cal-title">2026年4月</div>
+            <button class="cal-nav" onclick="changeMonth(1)">›</button>
+          </div>
+          <div class="cal-grid" id="cal-grid"></div>
+          <div class="class-list" id="class-list"></div>
+        </div>
+
+        <!-- Draw Cards -->
+        <div id="tab-cards" class="section">
+          <div class="draw-section">
+            <div class="draw-tabs">
+              <div class="draw-tab active" onclick="setCardType('pose', this)">體位法卡</div>
+              <div class="draw-tab" onclick="setCardType('mind', this)">心靈小卡</div>
+            </div>
+            <div class="card-display" id="card-display">
+              <div class="card-emoji" id="card-emoji">🧘</div>
+              <div class="card-name" id="card-name">點擊抽卡</div>
+              <div class="card-desc" id="card-desc">每日一抽，或用集點解鎖更多次數</div>
+            </div>
+            <div class="draw-actions">
+              <button class="draw-btn btn-primary" onclick="drawCard(1)">每日一抽 (免費)</button>
+              <button class="draw-btn btn-secondary" onclick="drawCard(20)">集點抽 (-20點)</button>
+            </div>
+            <div class="cooldown" id="cooldown-msg">今日免費抽卡：剩餘 1 次</div>
+          </div>
+        </div>
+
+        <!-- Points -->
+        <div id="tab-points" class="section">
+          <div class="points-header">
+            <div class="points-big" id="pts-display">120</div>
+            <div class="points-label">目前積分</div>
+            <div class="progress-bar"><div class="progress-fill" id="pts-bar" style="width: 48%"></div></div>
+            <div class="progress-label" id="pts-next">再 80 點解鎖「多抽一次」</div>
+          </div>
+          <div style="font-size: 13px; font-weight: 500; margin-bottom: 8px; color: var(--color-text-secondary)">賺取積分</div>
+          <div class="games-grid">
+            <div class="game-card" onclick="playBreath()">
+              <div class="game-icon">🌬️</div>
+              <div class="game-name">呼吸練習</div>
+              <div class="game-pts">+10 點/回合</div>
+            </div>
+            <div class="game-card" onclick="doCheckin()">
+              <div class="game-icon">✅</div>
+              <div class="game-name">每日打卡</div>
+              <div class="game-pts">+15 點/天</div>
+            </div>
+            <div class="game-card" onclick="doPoseQuiz()">
+              <div class="game-icon">🎯</div>
+              <div class="game-name">體位問答</div>
+              <div class="game-pts">+5~25 點</div>
+            </div>
+            <div class="game-card" onclick="showStreak()">
+              <div class="game-icon">🔥</div>
+              <div class="game-name">連續天數</div>
+              <div class="game-pts">天數×2 點</div>
+            </div>
+          </div>
+          <div style="font-size: 13px; font-weight: 500; margin: 16px 0 8px; color: var(--color-text-secondary)">最近紀錄</div>
+          <div class="history-list" id="history-list"></div>
+        </div>
+
+        <!-- Teacher Mode -->
+        <div id="tab-teacher" class="section">
+          <div class="mode-toggle">
+            <button class="mode-btn active" id="mode-teacher" onclick="setMode('teacher')">老師模式</button>
+            <button class="mode-btn" id="mode-student" onclick="setMode('student')">學生預覽</button>
+          </div>
+          <div id="teacher-panel">
+            <div style="font-size: 13px; font-weight: 500; margin-bottom: 10px; color: var(--color-text-secondary)">新增課程</div>
+            <div class="add-class-form">
+              <div class="form-row">
+                <label class="form-label">課程名稱</label>
+                <input class="form-input" id="new-class-name" placeholder="e.g. 晨間流瑜伽" />
+              </div>
+              <div class="form-row form-row-2">
+                <div>
+                  <label class="form-label">日期</label>
+                  <input class="form-input" id="new-class-date" type="date" value="2026-04-30" />
+                </div>
+                <div>
+                  <label class="form-label">時間</label>
+                  <input class="form-input" id="new-class-time" type="time" value="07:00" />
+                </div>
+              </div>
+              <div class="form-row form-row-2">
+                <div>
+                  <label class="form-label">人數上限</label>
+                  <input class="form-input" id="new-class-max" type="number" value="12" min="1" max="30" />
+                </div>
+                <div>
+                  <label class="form-label">時長（分鐘）</label>
+                  <input class="form-input" id="new-class-dur" type="number" value="60" />
+                </div>
+              </div>
+              <div class="form-row">
+                <label class="form-label">報名表單連結</label>
+                <input class="form-input" id="new-class-link" placeholder="https://forms.google.com/..." />
+              </div>
+              <button class="submit-btn" onclick="addClass()">+ 新增課程</button>
+            </div>
+          </div>
+          <div id="student-panel" style="display: none">
+            <div style="font-size: 13px; color: var(--color-text-secondary); margin-bottom: 10px">以下是老師開放的課程，點擊即可前往報名表單</div>
+            <div id="student-class-list"></div>
+          </div>
+        </div>
+
+        <!-- Profile -->
+        <div id="tab-profile" class="section">
+          <div
+            style="
+              display: flex;
+              align-items: center;
+              gap: 14px;
+              background: var(--color-background-primary);
+              border: 0.5px solid var(--color-border-tertiary);
+              border-radius: var(--border-radius-lg);
+              padding: 16px;
+              margin-bottom: 12px;
+            "
+          >
+            <div style="width: 52px; height: 52px; border-radius: 50%; background: #e1f5ee; display: flex; align-items: center; justify-content: center; font-size: 22px">🧘‍♀️</div>
+            <div>
+              <div style="font-size: 16px; font-weight: 500">Mei Lin</div>
+              <div style="font-size: 13px; color: var(--color-text-secondary)">加入 128 天</div>
+            </div>
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 16px">
+            <div style="background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 12px; text-align: center">
+              <div style="font-size: 22px; font-weight: 500; color: #1d9e75">47</div>
+              <div style="font-size: 11px; color: var(--color-text-secondary)">已上課堂</div>
+            </div>
+            <div style="background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 12px; text-align: center">
+              <div style="font-size: 22px; font-weight: 500; color: #1d9e75" id="profile-pts">120</div>
+              <div style="font-size: 11px; color: var(--color-text-secondary)">積分</div>
+            </div>
+            <div style="background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 12px; text-align: center">
+              <div style="font-size: 22px; font-weight: 500; color: #1d9e75">12</div>
+              <div style="font-size: 11px; color: var(--color-text-secondary)">連續天數</div>
+            </div>
+          </div>
+          <div style="background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-md); overflow: hidden">
+            <div style="padding: 12px 14px; border-bottom: 0.5px solid var(--color-border-tertiary); font-size: 13px; display: flex; justify-content: space-between">
+              <span>推播通知</span><span style="color: #1d9e75">開啟</span>
+            </div>
+            <div style="padding: 12px 14px; border-bottom: 0.5px solid var(--color-border-tertiary); font-size: 13px; display: flex; justify-content: space-between">
+              <span>上課提醒</span><span style="color: #1d9e75">上課前1小時</span>
+            </div>
+            <div style="padding: 12px 14px; font-size: 13px; display: flex; justify-content: space-between"><span>語言</span><span style="color: var(--color-text-secondary)">繁體中文</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+      var pts = 120;
+      var freeDrawUsed = false;
+      var cardType = 'pose';
+      var checkinDone = false;
+      var currentMonth = 4;
+      var currentYear = 2026;
+
+      var posCards = [
+        { e: '🧘', n: '山式 Tadasana', d: '穩固站立，感受大地能量由腳底升起，建立內在根基' },
+        { e: '🌊', n: '拜日式 Surya Namaskar', d: '十二個動作串聯，喚醒身體，向光之能量致敬' },
+        { e: '🦁', n: '獅子式 Simhasana', d: '大口吐氣，釋放壓力，讓勇氣從胸腔湧現' },
+        { e: '🌳', n: '樹式 Vrksasana', d: '單腳平衡，如樹根深植，培養專注與穩定' },
+        { e: '🐍', n: '眼鏡蛇式 Bhujangasana', d: '開展心輪，增強脊椎彈性，提振精神與自信' },
+        { e: '🦅', n: '鷹式 Garudasana', d: '扭轉纏繞，考驗平衡，象徵專注如鷹的視野' }
+      ];
+      var mindCards = [
+        { e: '🌸', n: '今日主題：接納', d: '放下對完美的執著，允許自己就是現在的樣子' },
+        { e: '☀️', n: '今日主題：感恩', d: '感謝身體帶你走過每一天，每次呼吸都是禮物' },
+        { e: '🌙', n: '今日主題：放下', d: '如月落入水中，靜靜沉澱，讓不需要的隨水漂走' },
+        { e: '🌿', n: '今日主題：生長', d: '每一個不舒服的伸展，都是成長的空間在打開' },
+        { e: '💧', n: '今日主題：流動', d: '不抗拒改變，像水一樣找到屬於自己的形狀' }
+      ];
+
+      var classes = [
+        { date: '2026-04-29', name: '晨間流瑜伽', time: '07:00', dur: 60, max: 12, booked: 8, link: 'https://forms.google.com/example1' },
+        { date: '2026-04-29', name: '陰瑜伽放鬆', time: '19:30', dur: 75, max: 10, booked: 10, link: 'https://forms.google.com/example2' },
+        { date: '2026-04-30', name: '孕婦瑜伽', time: '10:00', dur: 60, max: 8, booked: 3, link: 'https://forms.google.com/example3' },
+        { date: '2026-05-02', name: '力量瑜伽', time: '18:00', dur: 60, max: 15, booked: 11, link: 'https://forms.google.com/example4' },
+        { date: '2026-05-05', name: '冥想靜坐', time: '07:30', dur: 45, max: 20, booked: 6, link: 'https://forms.google.com/example5' }
+      ];
+
+      var history = [
+        { label: '每日打卡', pts: 15, date: '今天' },
+        { label: '呼吸練習', pts: 10, date: '昨天' },
+        { label: '集點抽卡', pts: -20, date: '昨天' },
+        { label: '體位問答', pts: 15, date: '3天前' }
+      ];
+
+      var selectedDate = '2026-04-29';
+
+      function switchTab(t) {
+        document.querySelectorAll('.section').forEach((s) => s.classList.remove('active'));
+        document.querySelectorAll('.nav-btn').forEach((b) => b.classList.remove('active'));
+        document.getElementById('tab-' + t).classList.add('active');
+        event.target.classList.add('active');
+        if (t === 'points') renderHistory();
+        if (t === 'calendar') renderCalendar();
+        if (t === 'teacher') renderStudentList();
+      }
+
+      function renderCalendar() {
+        var title = currentYear + '年' + currentMonth + '月';
+        document.getElementById('cal-title').textContent = title;
+        var grid = document.getElementById('cal-grid');
+        var days = ['日', '一', '二', '三', '四', '五', '六'];
+        grid.innerHTML = days.map((d) => '<div class="cal-day-label">' + d + '</div>').join('');
+        var first = new Date(currentYear, currentMonth - 1, 1).getDay();
+        var total = new Date(currentYear, currentMonth, 0).getDate();
+        for (var i = 0; i < first; i++) grid.innerHTML += '<div></div>';
+        var classDates = classes.map((c) => c.date);
+        for (var d = 1; d <= total; d++) {
+          var dateStr = currentYear + '-' + String(currentMonth).padStart(2, '0') + '-' + String(d).padStart(2, '0');
+          var isToday = currentYear === 2026 && currentMonth === 4 && d === 29;
+          var hasClass = classDates.includes(dateStr);
+          var isSel = dateStr === selectedDate;
+          var cls = 'cal-day' + (isToday ? ' today' : '') + (hasClass ? ' has-class' : '') + (isSel ? ' selected' : '');
+          grid.innerHTML += '<div class="' + cls + '" onclick="selectDate(\'' + dateStr + '\')">' + d + '</div>';
+        }
+        renderClassList();
+      }
+
+      function selectDate(d) {
+        selectedDate = d;
+        renderCalendar();
+      }
+
+      function changeMonth(dir) {
+        currentMonth += dir;
+        if (currentMonth > 12) {
+          currentMonth = 1;
+          currentYear++;
+        }
+        if (currentMonth < 1) {
+          currentMonth = 12;
+          currentYear--;
+        }
+        renderCalendar();
+      }
+
+      function renderClassList() {
+        var list = document.getElementById('class-list');
+        var dayClasses = classes.filter((c) => c.date === selectedDate);
+        if (!dayClasses.length) {
+          list.innerHTML = '<div style="text-align:center;color:var(--color-text-tertiary);padding:20px;font-size:13px">這天沒有課程</div>';
+          return;
+        }
+        list.innerHTML = dayClasses
+          .map((c) => {
+            var full = c.booked >= c.max;
+            return (
+              '<div class="class-card"><div class="class-top"><div class="class-name">' +
+              c.name +
+              '</div><span class="class-badge ' +
+              (full ? 'badge-full' : 'badge-open') +
+              '">' +
+              (full ? '已額滿' : '開放報名') +
+              '</span></div><div class="class-info"><span>' +
+              c.time +
+              '</span><span>' +
+              c.dur +
+              '分鐘</span><span>' +
+              c.booked +
+              '/' +
+              c.max +
+              ' 人</span></div>' +
+              (full
+                ? '<button class="book-btn" style="background:#D3D1C7;cursor:not-allowed">已額滿</button>'
+                : '<button class="book-btn link" onclick="openLink(\'' + c.link + '\')">前往報名表單 ↗</button>') +
+              '</div>'
+            );
+          })
+          .join('');
+      }
+
+      function openLink(url) {
+        showToast('開啟報名表單...');
+      }
+
+      function setCardType(t, el) {
+        cardType = t;
+        document.querySelectorAll('.draw-tab').forEach((e) => e.classList.remove('active'));
+        el.classList.add('active');
+        document.getElementById('card-emoji').textContent = '🧘';
+        document.getElementById('card-name').textContent = '點擊抽卡';
+        document.getElementById('card-desc').textContent = '選擇卡種，開始抽卡';
+      }
+
+      function drawCard(cost) {
+        if (cost === 1 && freeDrawUsed) {
+          showToast('今日免費抽卡已用完！');
+          return;
+        }
+        if (cost === 20) {
+          if (pts < 20) {
+            showToast('積分不足！');
+            return;
           }
-        }, 1000);
-    }
-    document.getElementById('bcircle').onclick = function () {
-      if (!done) nextPhase();
-    };
-    window.exitBreath = function () {
-      window._exitBreath = true;
-      renderPoints();
-    };
-  }
+          pts -= 20;
+          addHistory('集點抽卡', -20);
+        } else {
+          freeDrawUsed = true;
+          document.getElementById('cooldown-msg').textContent = '今日免費抽卡：已使用';
+        }
+        var pool = cardType === 'pose' ? posCards : mindCards;
+        var card = pool[Math.floor(Math.random() * pool.length)];
+        document.getElementById('card-emoji').textContent = card.e;
+        document.getElementById('card-name').textContent = card.n;
+        document.getElementById('card-desc').textContent = card.d;
+        updatePts();
+        showToast('抽到：' + card.n + ' ✨');
+      }
 
-  function exitBreath() {
-    window._exitBreath = true;
-    renderPoints();
-  }
+      function addHistory(label, p) {
+        history.unshift({ label: label, pts: p, date: '剛剛' });
+      }
 
-  function renderPoints() {
-    var p = document.getElementById('tab-points');
-    p.innerHTML =
-      '<div class="points-header"><div class="points-big" id="pts-display">' +
-      pts +
-      '</div><div class="points-label">目前積分</div><div class="progress-bar"><div class="progress-fill" id="pts-bar" style="width:' +
-      Math.min((pts / 200) * 100, 100) +
-      '%"></div></div><div class="progress-label" id="pts-next">' +
-      (pts < 200 ? '再 ' + (200 - pts) + ' 點解鎖「多抽一次」' : '已解鎖多抽一次！') +
-      '</div></div><div style="font-size:13px;font-weight:500;margin-bottom:8px;color:var(--color-text-secondary)">賺取積分</div><div class="games-grid"><div class="game-card" onclick="playBreath()"><div class="game-icon">🌬️</div><div class="game-name">呼吸練習</div><div class="game-pts">+10 點/回合</div></div><div class="game-card" onclick="doCheckin()"><div class="game-icon">✅</div><div class="game-name">每日打卡</div><div class="game-pts">+15 點/天</div></div><div class="game-card" onclick="doPoseQuiz()"><div class="game-icon">🎯</div><div class="game-name">體位問答</div><div class="game-pts">+5~25 點</div></div><div class="game-card" onclick="showStreak()"><div class="game-icon">🔥</div><div class="game-name">連續天數</div><div class="game-pts">天數×2 點</div></div></div><div style="font-size:13px;font-weight:500;margin:16px 0 8px;color:var(--color-text-secondary)">最近紀錄</div><div class="history-list" id="history-list"></div>';
-    renderHistory();
-  }
+      function renderHistory() {
+        var list = document.getElementById('history-list');
+        list.innerHTML = history
+          .map(
+            (h) =>
+              '<div class="history-item"><span>' +
+              h.label +
+              '</span><div><span class="history-pts">' +
+              (h.pts > 0 ? '+' : '') +
+              h.pts +
+              ' 點</span><span style="font-size:11px;color:var(--color-text-tertiary);margin-left:6px">' +
+              h.date +
+              '</span></div></div>'
+          )
+          .join('');
+      }
 
-  function doPoseQuiz() {
-    var q = [
-      { q: '「戰士二式」英文是？', a: 'Warrior II', w: ['Downward Dog', 'Child Pose'] },
-      { q: '哪個體位法以蛇命名？', a: '眼鏡蛇式', w: ['貓牛式', '鴿子式'] },
-      { q: '「Savasana」中文是？', a: '攤屍式', w: ['樹式', '魚式'] }
-    ];
-    var quiz = q[Math.floor(Math.random() * q.length)];
-    var opts = [quiz.a, ...quiz.w].sort(() => Math.random() - 0.5);
-    var html =
-      '<div style="background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:16px;margin-bottom:12px"><div style="font-size:14px;font-weight:500;margin-bottom:12px">' +
-      quiz.q +
-      '</div>';
-    opts.forEach((o) => {
-      html +=
-        '<button onclick="answerQuiz(\'' +
-        o +
-        "','" +
-        quiz.a +
-        '\')" style="display:block;width:100%;text-align:left;padding:10px 12px;margin-bottom:6px;border:0.5px solid var(--color-border-tertiary);border-radius:6px;background:var(--color-background-secondary);cursor:pointer;font-size:13px;color:var(--color-text-primary)">' +
-        o +
-        '</button>';
-    });
-    html += '</div>';
-    var p = document.getElementById('tab-points');
-    p.innerHTML = html + '<button class="draw-btn btn-secondary" onclick="renderPoints()">← 返回</button>';
-  }
+      function updatePts() {
+        document.getElementById('header-pts').textContent = pts;
+        document.getElementById('pts-display').textContent = pts;
+        document.getElementById('profile-pts').textContent = pts;
+        var pct = Math.min((pts / 200) * 100, 100);
+        document.getElementById('pts-bar').style.width = pct + '%';
+        var next = Math.max(200 - pts, 0);
+        document.getElementById('pts-next').textContent = next > 0 ? '再 ' + next + ' 點解鎖「多抽一次」' : '已解鎖多抽一次！';
+      }
 
-  window.answerQuiz = function (ans, correct) {
-    if (ans === correct) {
-      var p = 5 + Math.floor(Math.random() * 3) * 5;
-      pts += p;
-      addHistory('體位問答', p);
+      function doCheckin() {
+        if (checkinDone) {
+          showToast('今天已打卡囉！');
+          return;
+        }
+        checkinDone = true;
+        pts += 15;
+        addHistory('每日打卡', 15);
+        updatePts();
+        renderHistory();
+        showToast('+15 點！打卡成功 ✅');
+      }
+
+      function playBreath() {
+        var circle = document.getElementById('card-display');
+        var orig = circle.innerHTML;
+        document.getElementById('tab-cards').style.display = 'none';
+        var panel = document.getElementById('tab-points');
+        panel.innerHTML =
+          '<div class="game-area"><div style="font-size:14px;font-weight:500;margin-bottom:4px">呼吸練習</div><div style="font-size:12px;color:var(--color-text-secondary);margin-bottom:8px">跟著圓圈節奏呼吸，完成 3 輪獲得積分</div><div class="breath-circle" id="bcircle" onclick="nextBreath()"><div><div class="breath-label" id="blabel">吸氣</div><div id="bcount" style="font-size:12px;color:#3B6D11">點擊開始</div></div></div><div style="font-size:12px;color:var(--color-text-secondary)" id="bread">準備好了嗎？</div><div class="streak" id="bstreak"></div><button class="draw-btn btn-secondary" style="margin-top:16px" onclick="exitBreath()">← 返回</button></div>';
+        var round = 0,
+          phase = 0,
+          phases = ['吸氣', '屏息', '吐氣', '屏息'],
+          durations = [4, 2, 6, 2];
+        var timer,
+          done = false;
+        var strk = document.getElementById('bstreak');
+        for (var i = 0; i < 3; i++) strk.innerHTML += '<div class="streak-dot" id="sd' + i + '">' + '①②③'[i] + '</div>';
+        window._exitBreath = false;
+        function nextPhase() {
+          if (window._exitBreath) return;
+          if (done) return;
+          document.getElementById('blabel').textContent = phases[phase];
+          var sz = phase === 0 || phase === 1 ? '150px' : '100px';
+          document.getElementById('bcircle').style.width = sz;
+          document.getElementById('bcircle').style.height = sz;
+          document.getElementById('bread').textContent = '保持 ' + durations[phase] + ' 秒';
+          var t = 0,
+            iv = setInterval(function () {
+              t++;
+              document.getElementById('bcount').textContent = durations[phase] - t + ' 秒';
+              if (t >= durations[phase]) {
+                clearInterval(iv);
+                phase = (phase + 1) % 4;
+                if (phase === 0) {
+                  round++;
+                  document.getElementById('sd' + (round - 1)).classList.add('done');
+                  if (round >= 3) {
+                    done = true;
+                    pts += 10;
+                    addHistory('呼吸練習', 10);
+                    updatePts();
+                    document.getElementById('bread').textContent = '完成！獲得 +10 積分 🎉';
+                    document.getElementById('blabel').textContent = '完成';
+                    document.getElementById('bcount').textContent = '';
+                    return;
+                  }
+                }
+                nextPhase();
+              }
+            }, 1000);
+        }
+        document.getElementById('bcircle').onclick = function () {
+          if (!done) nextPhase();
+        };
+        window.exitBreath = function () {
+          window._exitBreath = true;
+          renderPoints();
+        };
+      }
+
+      function exitBreath() {
+        window._exitBreath = true;
+        renderPoints();
+      }
+
+      function renderPoints() {
+        var p = document.getElementById('tab-points');
+        p.innerHTML =
+          '<div class="points-header"><div class="points-big" id="pts-display">' +
+          pts +
+          '</div><div class="points-label">目前積分</div><div class="progress-bar"><div class="progress-fill" id="pts-bar" style="width:' +
+          Math.min((pts / 200) * 100, 100) +
+          '%"></div></div><div class="progress-label" id="pts-next">' +
+          (pts < 200 ? '再 ' + (200 - pts) + ' 點解鎖「多抽一次」' : '已解鎖多抽一次！') +
+          '</div></div><div style="font-size:13px;font-weight:500;margin-bottom:8px;color:var(--color-text-secondary)">賺取積分</div><div class="games-grid"><div class="game-card" onclick="playBreath()"><div class="game-icon">🌬️</div><div class="game-name">呼吸練習</div><div class="game-pts">+10 點/回合</div></div><div class="game-card" onclick="doCheckin()"><div class="game-icon">✅</div><div class="game-name">每日打卡</div><div class="game-pts">+15 點/天</div></div><div class="game-card" onclick="doPoseQuiz()"><div class="game-icon">🎯</div><div class="game-name">體位問答</div><div class="game-pts">+5~25 點</div></div><div class="game-card" onclick="showStreak()"><div class="game-icon">🔥</div><div class="game-name">連續天數</div><div class="game-pts">天數×2 點</div></div></div><div style="font-size:13px;font-weight:500;margin:16px 0 8px;color:var(--color-text-secondary)">最近紀錄</div><div class="history-list" id="history-list"></div>';
+        renderHistory();
+      }
+
+      function doPoseQuiz() {
+        var q = [
+          { q: '「戰士二式」英文是？', a: 'Warrior II', w: ['Downward Dog', 'Child Pose'] },
+          { q: '哪個體位法以蛇命名？', a: '眼鏡蛇式', w: ['貓牛式', '鴿子式'] },
+          { q: '「Savasana」中文是？', a: '攤屍式', w: ['樹式', '魚式'] }
+        ];
+        var quiz = q[Math.floor(Math.random() * q.length)];
+        var opts = [quiz.a, ...quiz.w].sort(() => Math.random() - 0.5);
+        var html =
+          '<div style="background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:16px;margin-bottom:12px"><div style="font-size:14px;font-weight:500;margin-bottom:12px">' +
+          quiz.q +
+          '</div>';
+        opts.forEach((o) => {
+          html +=
+            '<button onclick="answerQuiz(\'' +
+            o +
+            "','" +
+            quiz.a +
+            '\')" style="display:block;width:100%;text-align:left;padding:10px 12px;margin-bottom:6px;border:0.5px solid var(--color-border-tertiary);border-radius:6px;background:var(--color-background-secondary);cursor:pointer;font-size:13px;color:var(--color-text-primary)">' +
+            o +
+            '</button>';
+        });
+        html += '</div>';
+        var p = document.getElementById('tab-points');
+        p.innerHTML = html + '<button class="draw-btn btn-secondary" onclick="renderPoints()">← 返回</button>';
+      }
+
+      window.answerQuiz = function (ans, correct) {
+        if (ans === correct) {
+          var p = 5 + Math.floor(Math.random() * 3) * 5;
+          pts += p;
+          addHistory('體位問答', p);
+          updatePts();
+          showToast('答對了！+' + p + ' 點 🎉');
+        } else showToast('答錯了！正確是：' + correct);
+        setTimeout(renderPoints, 800);
+      };
+
+      function showStreak() {
+        pts += 24;
+        addHistory('連續天數獎勵', 24);
+        updatePts();
+        renderHistory();
+        showToast('連續12天！+24 點 🔥');
+      }
+
+      function addClass() {
+        var name = document.getElementById('new-class-name').value.trim();
+        var date = document.getElementById('new-class-date').value;
+        var time = document.getElementById('new-class-time').value;
+        var max = parseInt(document.getElementById('new-class-max').value) || 12;
+        var dur = parseInt(document.getElementById('new-class-dur').value) || 60;
+        var link = document.getElementById('new-class-link').value.trim() || 'https://forms.google.com/example';
+        if (!name) {
+          showToast('請輸入課程名稱');
+          return;
+        }
+        classes.push({ date, name, time, dur, max, booked: 0, link });
+        showToast('課程已新增：' + name + ' ✓');
+        document.getElementById('new-class-name').value = '';
+        renderStudentList();
+      }
+
+      function setMode(m) {
+        document.getElementById('mode-teacher').className = 'mode-btn' + (m === 'teacher' ? ' active' : '');
+        document.getElementById('mode-student').className = 'mode-btn' + (m === 'student' ? ' active' : '');
+        document.getElementById('teacher-panel').style.display = m === 'teacher' ? 'block' : 'none';
+        document.getElementById('student-panel').style.display = m === 'student' ? 'block' : 'none';
+        if (m === 'student') renderStudentList();
+      }
+
+      function renderStudentList() {
+        var sorted = [...classes].sort((a, b) => a.date.localeCompare(b.date) || a.time.localeCompare(b.time));
+        var list = document.getElementById('student-class-list');
+        if (!list) return;
+        list.innerHTML = sorted
+          .map((c) => {
+            var full = c.booked >= c.max;
+            return (
+              '<div class="class-card"><div class="class-top"><div class="class-name">' +
+              c.name +
+              '</div><span class="class-badge ' +
+              (full ? 'badge-full' : 'badge-open') +
+              '">' +
+              (full ? '額滿' : '報名中') +
+              '</span></div><div class="class-info"><span>' +
+              c.date +
+              '</span><span>' +
+              c.time +
+              '</span><span>' +
+              c.dur +
+              '分鐘</span><span>' +
+              c.booked +
+              '/' +
+              c.max +
+              '人</span></div>' +
+              (full
+                ? '<button class="book-btn" style="background:#D3D1C7;cursor:not-allowed">已額滿</button>'
+                : '<button class="book-btn link" onclick="openLink(\'' + c.link + '\')">前往報名表單 ↗</button>') +
+              '</div>'
+            );
+          })
+          .join('');
+      }
+
+      function showToast(msg) {
+        var t = document.getElementById('toast');
+        t.textContent = msg;
+        t.classList.add('show');
+        setTimeout(() => t.classList.remove('show'), 2500);
+      }
+
+      renderCalendar();
       updatePts();
-      showToast('答對了！+' + p + ' 點 🎉');
-    } else showToast('答錯了！正確是：' + correct);
-    setTimeout(renderPoints, 800);
-  };
-
-  function showStreak() {
-    pts += 24;
-    addHistory('連續天數獎勵', 24);
-    updatePts();
-    renderHistory();
-    showToast('連續12天！+24 點 🔥');
-  }
-
-  function addClass() {
-    var name = document.getElementById('new-class-name').value.trim();
-    var date = document.getElementById('new-class-date').value;
-    var time = document.getElementById('new-class-time').value;
-    var max = parseInt(document.getElementById('new-class-max').value) || 12;
-    var dur = parseInt(document.getElementById('new-class-dur').value) || 60;
-    var link = document.getElementById('new-class-link').value.trim() || 'https://forms.google.com/example';
-    if (!name) {
-      showToast('請輸入課程名稱');
-      return;
-    }
-    classes.push({ date, name, time, dur, max, booked: 0, link });
-    showToast('課程已新增：' + name + ' ✓');
-    document.getElementById('new-class-name').value = '';
-    renderStudentList();
-  }
-
-  function setMode(m) {
-    document.getElementById('mode-teacher').className = 'mode-btn' + (m === 'teacher' ? ' active' : '');
-    document.getElementById('mode-student').className = 'mode-btn' + (m === 'student' ? ' active' : '');
-    document.getElementById('teacher-panel').style.display = m === 'teacher' ? 'block' : 'none';
-    document.getElementById('student-panel').style.display = m === 'student' ? 'block' : 'none';
-    if (m === 'student') renderStudentList();
-  }
-
-  function renderStudentList() {
-    var sorted = [...classes].sort((a, b) => a.date.localeCompare(b.date) || a.time.localeCompare(b.time));
-    var list = document.getElementById('student-class-list');
-    if (!list) return;
-    list.innerHTML = sorted
-      .map((c) => {
-        var full = c.booked >= c.max;
-        return (
-          '<div class="class-card"><div class="class-top"><div class="class-name">' +
-          c.name +
-          '</div><span class="class-badge ' +
-          (full ? 'badge-full' : 'badge-open') +
-          '">' +
-          (full ? '額滿' : '報名中') +
-          '</span></div><div class="class-info"><span>' +
-          c.date +
-          '</span><span>' +
-          c.time +
-          '</span><span>' +
-          c.dur +
-          '分鐘</span><span>' +
-          c.booked +
-          '/' +
-          c.max +
-          '人</span></div>' +
-          (full
-            ? '<button class="book-btn" style="background:#D3D1C7;cursor:not-allowed">已額滿</button>'
-            : '<button class="book-btn link" onclick="openLink(\'' + c.link + '\')">前往報名表單 ↗</button>') +
-          '</div>'
-        );
-      })
-      .join('');
-  }
-
-  function showToast(msg) {
-    var t = document.getElementById('toast');
-    t.textContent = msg;
-    t.classList.add('show');
-    setTimeout(() => t.classList.remove('show'), 2500);
-  }
-
-  renderCalendar();
-  updatePts();
-  renderHistory();
-  renderStudentList();
-</script>
+      renderHistory();
+      renderStudentList();
+    </script>
+  </body>
+</html>
